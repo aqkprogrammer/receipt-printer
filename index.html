@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Receipt Printer — animated checkout &amp; receipt</title>
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>" />
+</head>
+<body>
+
+  <main class="stage">
+
+    <!-- ── terminal ────────────────────────────────────────────── -->
+    <section class="terminal" aria-label="Checkout">
+      <header class="terminal__bar">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2.5 14.1 9.9 21.5 12 14.1 14.1 12 21.5 9.9 14.1 2.5 12 9.9 9.9z"/></svg>
+        </span>
+
+        <ol class="steps" aria-label="Progress">
+          <li data-step="plan"><i></i>Plan</li>
+          <li data-step="pay"><i></i>Payment</li>
+          <li data-step="done"><i></i>Receipt</li>
+        </ol>
+
+        <button class="ghost" type="button" data-action="restart" title="Start over">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4h-4"/></svg>
+        </button>
+      </header>
+
+      <div class="screen" data-active="plan">
+
+        <!-- step 1 · plan -->
+        <section class="pane" data-pane="plan" aria-label="Choose plan">
+          <div class="pane__head">
+            <h1>Pro plan</h1>
+            <p>Everything in Starter, plus unlimited workspaces.</p>
+          </div>
+
+          <div class="segmented" role="radiogroup" aria-label="Billing cycle">
+            <span class="segmented__thumb" aria-hidden="true"></span>
+            <button type="button" role="radio" aria-checked="false" data-cycle="monthly">Monthly</button>
+            <button type="button" role="radio" aria-checked="true"  data-cycle="annual">Annual <em>−20%</em></button>
+          </div>
+
+          <div class="field field--row">
+            <div>
+              <label id="seats-label">Seats</label>
+              <p class="hint" data-seat-price>£192.00 / seat / year</p>
+            </div>
+            <div class="stepper" role="group" aria-labelledby="seats-label">
+              <button type="button" data-seats="-1" aria-label="Remove a seat">−</button>
+              <output data-seats-value>1</output>
+              <button type="button" data-seats="1" aria-label="Add a seat">+</button>
+            </div>
+          </div>
+
+          <form class="promo" data-promo-form novalidate>
+            <input type="text" placeholder="Promo code" aria-label="Promo code" data-promo-input autocomplete="off" spellcheck="false" />
+            <button class="btn btn--soft" type="submit">Apply</button>
+          </form>
+          <p class="error" data-promo-error hidden>That code isn’t valid. Try <b>LAUNCH10</b>.</p>
+
+          <dl class="summary" data-summary></dl>
+
+          <div class="total">
+            <span>Total due today</span>
+            <strong data-total>£230.40</strong>
+          </div>
+
+          <button class="btn btn--primary btn--wide" type="button" data-action="to-pay">
+            Continue to payment
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6"/></svg>
+          </button>
+        </section>
+
+        <!-- step 2 · payment -->
+        <section class="pane" data-pane="pay" aria-label="Payment details">
+          <div class="card3d" data-card>
+            <div class="card3d__inner">
+              <div class="card3d__face card3d__face--front">
+                <span class="card3d__sheen" aria-hidden="true"></span>
+                <span class="chip" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="brand" data-brand>CARD</span>
+                <span class="card3d__number" data-card-number>•••• •••• •••• ••••</span>
+                <span class="card3d__foot">
+                  <b data-card-name>CARDHOLDER NAME</b>
+                  <b data-card-exp>MM/YY</b>
+                </span>
+              </div>
+              <div class="card3d__face card3d__face--back">
+                <span class="magstripe" aria-hidden="true"></span>
+                <span class="cvc-strip"><i data-card-cvc>•••</i></span>
+              </div>
+            </div>
+          </div>
+
+          <form class="form" data-pay-form novalidate>
+            <div class="field">
+              <label for="num">Card number</label>
+              <input id="num" data-input="number" inputmode="numeric" autocomplete="off"
+                     placeholder="4242 4242 4242 4242" maxlength="23" />
+              <span class="error" data-error="number">Enter a valid card number</span>
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="exp">Expiry</label>
+                <input id="exp" data-input="exp" inputmode="numeric" autocomplete="off" placeholder="MM/YY" maxlength="5" />
+                <span class="error" data-error="exp">Check the date</span>
+              </div>
+              <div class="field">
+                <label for="cvc">CVC</label>
+                <input id="cvc" data-input="cvc" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="4" />
+                <span class="error" data-error="cvc">3 digits</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="name">Name on card</label>
+              <input id="name" data-input="name" autocomplete="off" placeholder="A. Cardholder" maxlength="26" />
+              <span class="error" data-error="name">Required</span>
+            </div>
+
+            <button class="chip-btn" type="button" data-action="testcard">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+              Fill demo card
+            </button>
+
+            <button class="btn btn--primary btn--wide btn--pay" type="submit" data-pay-btn>
+              <span class="btn__label">Pay <b data-pay-total>£230.40</b></span>
+              <span class="btn__spin" aria-hidden="true"></span>
+            </button>
+
+            <p class="fineprint">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V8a6 6 0 1 1 12 0v2"/><rect x="4" y="10" width="16" height="10" rx="2"/></svg>
+              Demo only — nothing is sent anywhere. Use the demo card, never a real one.
+            </p>
+          </form>
+        </section>
+
+        <!-- step 3 · authorising / approved -->
+        <section class="pane pane--auth" data-pane="done" aria-label="Authorisation">
+          <div class="seal" data-seal>
+            <svg class="seal__ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46"/></svg>
+            <svg class="seal__check" viewBox="0 0 100 100" aria-hidden="true"><path d="M28 52.5 43 67 73 34"/></svg>
+            <span class="seal__burst" aria-hidden="true"></span>
+          </div>
+
+          <ol class="checklist" data-checklist>
+            <li data-task="encrypt">Encrypting card details</li>
+            <li data-task="bank">Contacting issuing bank</li>
+            <li data-task="3ds">3-D Secure check</li>
+            <li data-task="auth">Authorising payment</li>
+          </ol>
+
+          <div class="approved" data-approved>
+            <h2>Payment approved</h2>
+            <p><span data-auth-brand>Visa</span> •••• <span data-auth-last4>4242</span> · auth <span data-auth-code>—</span></p>
+            <button class="btn btn--primary btn--wide" type="button" data-action="print">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6M7 19H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 15h10v6H7z"/></svg>
+              Print receipt
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div class="slot" aria-hidden="true">
+        <span class="slot__mouth"></span>
+        <span class="slot__head"></span>
+      </div>
+    </section>
+
+    <!-- ── paper ───────────────────────────────────────────────── -->
+    <div class="paper" data-paper role="status" aria-live="polite">
+      <div class="paper__window">
+        <article class="receipt">
+          <div class="receipt__logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2.5 14.1 9.9 21.5 12 14.1 14.1 12 21.5 9.9 14.1 2.5 12 9.9 9.9z"/></svg>
+          </div>
+
+          <hr class="rule" />
+
+          <div class="line line--lead">
+            <span class="line__k">PRO PLAN</span>
+            <span class="line__v" data-r-lead>£192.00</span>
+          </div>
+          <p class="sub" data-r-sub>Annual subscription · 1 seat</p>
+
+          <hr class="rule" />
+
+          <div data-r-lines></div>
+
+          <div class="line line--grand">
+            <span class="line__k">TOTAL PAID</span>
+            <span class="line__v" data-r-total>£230.40</span>
+          </div>
+
+          <hr class="rule" />
+
+          <div class="line line--meta"><span class="line__k">Order</span><span class="line__v" data-r-order>ORD-2048</span></div>
+          <div class="line line--meta"><span class="line__k">Paid with</span><span class="line__v" data-r-card>Visa •••• 4242</span></div>
+          <div class="line line--meta"><span class="line__k">Auth</span><span class="line__v" data-r-auth>—</span></div>
+          <div class="line line--meta"><span class="line__k">Date</span><span class="line__v" data-r-date>—</span></div>
+
+          <div class="barcode" data-barcode></div>
+          <p class="barcode__caption" data-r-caption>ORD-2048</p>
+        </article>
+      </div>
+      <p class="tear-hint" data-tear-hint hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14m-5-5 5 5 5-5"/></svg>
+        Drag down to tear off
+      </p>
+    </div>
+
+  </main>
+
+  <!-- ── controls ──────────────────────────────────────────────── -->
+  <footer class="controls">
+    <button class="btn" type="button" data-action="sound" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>
+      <span data-sound-label>Sound off</span>
+    </button>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
