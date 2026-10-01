@@ -1,6 +1,6 @@
 # Receipt Printer
 
-**Live demo → https://receipt-printer-tau.vercel.app/**
+**Live demo:** https://receipt-printer-tau.vercel.app · **Source:** https://github.com/aqkprogrammer/receipt-printer
 
 A three-step checkout that ends in a physical-feeling receipt: configure the
 plan, pay with an animated card form, watch the bank authorise it, then print
@@ -153,3 +153,14 @@ and auth code, so a given order always renders the same barcode.
 
 `prefers-reduced-motion` is respected throughout: typing, feeding and settling
 collapse to instant state changes.
+
+## Hosting
+
+Production runs on Vercel at https://receipt-printer-tau.vercel.app (project `receipt-printer`).
+It is a static site: Vercel serves the repository root as-is, with no build
+step.
+
+```bash
+npx vercel link --project receipt-printer   # once per checkout
+npx vercel deploy --prod
+```
